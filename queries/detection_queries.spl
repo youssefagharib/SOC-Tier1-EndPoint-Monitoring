@@ -1,0 +1,16 @@
+# ==============================================================================
+# SOC Tier 1 Detection & Threat Hunting Queries (SPL)
+# Monitored Endpoint: Youssef | Index: main
+# ==============================================================================
+
+# 1. Suspicious Encoded PowerShell Execution (MITRE T1059.001)
+index=main (source="*Sysmon*" OR source="*Security*") "-enc"
+| table _time, host, CommandLine, User
+
+# 2. LOLBAS Binary Activity - Ingress Tool Transfer (MITRE T1105)
+index=main source="*Sysmon*" Image="*\\curl.exe"
+| table _time, User, Image, CommandLine
+
+# 3. Discovery - Privilege & Account Enumeration (MITRE T1033 / T1087)
+index=main source="*Sysmon*" (Image="*\\whoami.exe" OR Image="*\\net.exe")
+| table _time, User, Image, CommandLine
